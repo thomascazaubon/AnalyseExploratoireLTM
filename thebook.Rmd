@@ -18,9 +18,16 @@ When you save the notebook, an HTML file containing the code and output will be 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
 ```{r}
+#Lecture du dataset original
 gterror = read.csv("globalterrorismdb_0718dist.csv", sep=',', header=TRUE)
-```
-```{r}
 
+#Filtrage pour ne garder que les colonnes pertinentes
+filtered <- subset(gterror, select=c(iyear, imonth, extended, country_txt, region_txt, provstate, city, latitude, longitude, multiple, success, suicide, attacktype1_txt, targtype1_txt, natlty1_txt, gname, nperps, claimed, weaptype1_txt, nkill, nkillter, nwound, nwoundte))
+
+#Renommage des colonnes 
+names(filtered) <- c("année", "mois", "étendu", "pays", "région", "région_locale", "ville", "latitude", "longitude", "multiple", "succès", "suicide", "type_attaque", "cible", "nationalité_ciblée", "responsable", "nombre_terroristes", "revendiqué", "type_arme", "nombre_morts", "nombre_terroristes_morts", "nombre_blessés", "nombre_terroristes_blessés")
+
+#Sauvegarde sur csv
+write.csv(filtered, "./filtered_terrorism.csv")
 ```
 
