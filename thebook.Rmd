@@ -17,9 +17,7 @@ names(filtered) <- c("année", "mois", "étendu", "pays", "région", "région_lo
 #Sauvegarde sur csv
 write.csv(filtered, "./filtered_terrorism.csv")
 ```
-
 C'est parti !
-
 ```{r}
 ####################################
 ####### COMMENCER EN DOUCEUR #######
@@ -37,4 +35,9 @@ nbkills = sum(na.omit(gterror$nombre_morts))
 killsPerYear = ddply(gterror, .(année), summarize, morts = sum(na.omit(nombre_morts)))
 plot = ggplot(killsPerYear, aes(x=année,y=morts))+geom_line()+ggtitle("Evolution du nombre de victimes du terrorisme dans le monde.")+xlab("Année")+ylab("Nombre de morts")
 ggsave(plot, filename = "graphiques/killsPerYear.pdf")
+#Nombre de victimes du terrorisme par région du monde
+killsPerRegion = killsPerYear = ddply(gterror, .(région), summarize, morts = sum(na.omit(nombre_morts)))
+killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
+killsPerRegion
+ggplot(killsPerRegion, aes(x=région,y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")
 ```
