@@ -37,7 +37,6 @@ plot = ggplot(killsPerYear, aes(x=année,y=morts))+geom_line()+ggtitle("Evolutio
 ggsave(plot, filename = "graphiques/killsPerYear.pdf")
 #Nombre de victimes du terrorisme par région du monde
 killsPerRegion = killsPerYear = ddply(gterror, .(région), summarize, morts = sum(na.omit(nombre_morts)))
-killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
-killsPerRegion
-ggplot(killsPerRegion, aes(x=région,y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")
+plot = ggplot(killsPerRegion, aes(x=région,y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))
+ggsave(plot, filename = "graphiques/killsPerRegion.pdf")
 ```
