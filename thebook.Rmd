@@ -41,29 +41,29 @@ nbkills = sum(na.omit(gterror$nombre_morts))
 
 #Nombre de victimes du terrorisme par année : 2014 est l'année la plus meurtrière avec quasiment 45000 victimes !
 killsPerYear = ddply(gterror, .(année), summarize, morts = sum(na.omit(nombre_morts)))
-plot = ggplot(killsPerYear, aes(x=année,y=morts))+geom_line()+ggtitle("Evolution du nombre de victimes du terrorisme dans le monde.")+xlab("Année")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=180))
-ggsave(plot, filename = "graphiques/killsPerYear.pdf")
+plot = ggplot(killsPerYear, aes(x=année,y=morts))+geom_line()+ggtitle("Evolution du nombre de victimes du terrorisme dans le monde.")+xlab("Année")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))
+ggsave(plot, filename = "graphiques/killsPerYear.pdf", width=4, height=3)
 
 #Nombre de victimes du terrorisme par région du monde
 killsPerRegion = ddply(gterror, .(région), summarize, morts = sum(na.omit(nombre_morts)))
 killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
-plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts),y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))
-ggsave(plot, filename = "graphiques/killsPerRegion.pdf")
+plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts),y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")+coord_flip()
+ggsave(plot, filename = "graphiques/killsPerRegion.pdf", width=4, height=3)
 
 #Les 10 pays les plus meurtriers
 killsPerCountry = ddply(gterror, .(pays), summarize, morts = sum(na.omit(nombre_morts)))
 killsPerCountry = killsPerCountry[order(-killsPerCountry$morts),][0:10,]
-plot = ggplot(killsPerCountry, aes(x=reorder(pays,-morts),y=morts))+geom_bar(stat="identity")+ggtitle("Les dix pays les plus meurtriers.")+xlab("Pays")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))
-ggsave(plot, filename = "graphiques/tenDeadliestCountries.pdf")
+plot = ggplot(killsPerCountry, aes(x=reorder(pays,-morts),y=morts))+geom_bar(stat="identity")+ggtitle("Les dix pays les plus touchés")+xlab("Pays")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))
+ggsave(plot, filename = "graphiques/tenDeadliestCountries.pdf", width=4, height=3)
 
 #Evolution du nombre de succès
 successesPerYear = ddply(gterror, .(année), summarize, ratio = (sum(na.omit(succès))/length(année)))
 plot = ggplot(successesPerYear, aes(x=année,y=ratio))+geom_line()+ggtitle("Evolution du taux de réussite des attentats.")+xlab("Année")+ylab("Taux de réussite")+theme(axis.text.x = element_text(angle=45))
-ggsave(plot, filename = "graphiques/successRatioPerYear.pdf")
+ggsave(plot, filename = "graphiques/successRatioPerYear.pdf", width=4, height=3)
 
 #Nationalité la plus visée par année
 mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts = sum(na.omit(nombre_morts)))
 mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
-mostTargetedNationality = ddply(mostTargetedNationality, .(année, nationalité_ciblée), summarize, morts = max(na.omit(morts)))
+mostTargetedNationality = ddply(mostTargetedNationality, .(année), summarize, nationalite = nationalité_ciblée[1], morts = morts[1])
 mostTargetedNationality
 ```
