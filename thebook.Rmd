@@ -57,6 +57,18 @@ ggsave(plot, filename="graphiques/killsPerYear.pdf", width=16, height=9)
 ```
 
 ```{r}
+#Nombre d'attentats par année
+attacksPerYear = ddply(gterror, .(année), summarize,
+                     attentats=length(pays))
+plot = ggplot(attacksPerYear, aes(x=année, y=attentats)) + 
+  geom_line(size=0.8) + geom_point(size=3) + 
+  labs(title="Evolution du nombre d'attentats dans le monde", x ="Année", y="Nombre d'attentats") + 
+  theme(title=element_text(size=30), 
+        axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
+ggsave(plot, filename="graphiques/attacksPerYear.pdf", width=16, height=9)
+```
+
+```{r}
 #Nombre de victimes du terrorisme par région du monde
 killsPerRegion = ddply(gterror, .(région), summarize, morts=sum(na.omit(nombre_morts)))
 killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
