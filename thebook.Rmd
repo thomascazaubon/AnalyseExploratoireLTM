@@ -65,8 +65,9 @@ ggsave(plot, filename = "graphiques/successRatioPerYear.pdf", width=4, height=3)
 mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts = sum(na.omit(nombre_morts)))
 mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
 mostTargetedNationality = ddply(mostTargetedNationality, .(année), summarize, nationalite = nationalité_ciblée[1], morts = morts[1])
-plot = ggplot(mostTargetedNationality, aes(x=année,y=nationalite))+geom_line()+ggtitle("Evolution du taux de réussite des attentats.")+xlab("Année")+ylab("Taux de réussite")+theme(axis.text.x = element_text(angle=45))
-ggsave(plot, filename = "graphiques/mostTargetedNationalityPerYear.pdf", width=4, height=3)
+plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite))+geom_bar(stat="identity")+ggtitle("La nationalité la plus visée par le terrorisme selon l'année")+xlab("Année")+ylab("Nombre de morts")+theme(axis.text.x = element_text(angle=45))+geom_text(aes(label=nationalite), position=position_dodge(width=0.9), vjust=0, angle = 90)
+ggsave(plot, filename = "graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
+mostTargetedNationality
 ```
 
 ```{r}
