@@ -69,38 +69,6 @@ ggsave(plot, filename="graphiques/attacksPerYear.pdf", width=16, height=9)
 ```
 
 ```{r}
-#Nombre de victimes du terrorisme par région du monde
-killsPerRegion = ddply(gterror, .(région), summarize, morts=sum(na.omit(nombre_morts)))
-killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
-plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts), y=morts, fill=région)) +
-  geom_bar(stat="identity") +
-  labs(title="Nombre de victimes du terrorisme par région", x="Région", y="Nombre de morts") + 
-  geom_text(aes(label=région), color="black", hjust=-0.005, size=4.3, angle=90) +
-  theme(title=element_text(size=30), 
-        axis.title.x=element_text(size=20), axis.title.y=element_text(size=20), 
-        axis.text.x=element_blank(),  axis.text.y=element_text(size=20), 
-        legend.position="none") +
-  ylim(min=0, max=180000)
-ggsave(plot, filename="graphiques/killsPerRegion.pdf", width=16, height=9)
-```
-
-```{r}
-#Les 10 pays les plus touchés
-killsPerCountry = ddply(gterror, .(pays), summarize, morts=sum(na.omit(nombre_morts)))
-killsPerCountry = killsPerCountry[order(-killsPerCountry$morts),][0:10,]
-plot = ggplot(killsPerCountry, aes(x=reorder(pays,-morts),y=morts, fill=pays)) +
-  geom_bar(stat="identity") +
-  labs(title="Les dix pays les plus touchés", x="Pays", y="Nombre de morts") +
-  geom_text(aes(label=pays), vjust=0, hjust=-0.1, color="black", size=10, angle=90) + 
-  theme(title=element_text(size=30), 
-        axis.title.x=element_text(size=20), axis.title.y=element_text(size=20), 
-        axis.text.x=element_blank(), axis.text.y=element_text(size=20),  
-        legend.position="none") + 
-  ylim(min=0, max=90000)
-ggsave(plot, filename="graphiques/tenTargetedCountries.pdf", width=16, height=9)
-```
-
-```{r}
 #Evolution du nombre de succès
 successesPerYear = ddply(gterror, .(année), summarize, ratio=(sum(na.omit(succès))/length(année)))
 plot = ggplot(successesPerYear, aes(x=année, y=ratio)) +
@@ -111,42 +79,11 @@ ggsave(plot, filename="graphiques/successRatioPerYear.pdf", width=16, height=9)
 ```
 
 ```{r}
-#Nationalité la plus visée par année
-mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts=sum(na.omit(nombre_morts)))
-mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
-mostTargetedNationality = ddply(mostTargetedNationality, .(année), summarize, nationalite=nationalité_ciblée[1], morts=morts[1])
-plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite)) +
-  geom_bar(stat="identity") + 
-  labs(title="La nationalité la plus visée par le terrorisme selon l'année", x="Année", y="Nombre de morts") + 
-  geom_text(aes(label=nationalite), position=position_dodge(width=0.9), size=6, vjust=0.4, hjust=-0.1, angle = 90) +
-  theme(title=element_text(size=30), 
-        axis.text.x=element_text(size=15, angle=90), 
-        axis.text.y=element_text(size=20), 
-        legend.position="none")+
-  scale_x_continuous(breaks = c(1970:2017))+ylim(min=0,max=15000)
-ggsave(plot, filename="graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
-```
-
-```{r}
-#Evolution du nombre de victimes en France
-gterrorfr = gterror[gterror$pays=="France",]
-gterrorfr = ddply(gterrorfr, .(année), summarize, morts = sum(na.omit(nombre_morts)))
-plot = ggplot(gterrorfr, aes(x=année,y=morts)) +
-  geom_line(size=0.8) + geom_point(size=3) + 
-  labs(title="Evolution du nombre de victimes en France", x="Année", y="Nombre de morts") +
-  theme(title=element_text(size=30),
-        axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
-ggsave(plot, filename = "graphiques/killsInFrancePerYear.pdf", width=16, height=9)
-```
-Se familiariser avec les armes : 
-```{r}
 # Je garde uniquement certaines colonnes qui m'interessent.
 tw = subset(gterror, select=c(année, pays, type_attaque, responsable, type_arme, nombre_morts, nombre_blessés))
 
 '%ni%' <- Negate('%in%')
-```
 
-```{r}
 # Nombre de morts par type d'arme utilisé.
 morts_par_type_arme = ddply(tw, .(type_arme), summarize, nombre_morts=sum(na.omit(nombre_morts)))
 
@@ -181,6 +118,55 @@ ggsave(gbottom5, filename="graphiques/bottom5weaponsEvolutionOfKills.pdf", width
 ```
 
 ```{r}
+#Nationalité la plus visée par année
+mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts=sum(na.omit(nombre_morts)))
+mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
+mostTargetedNationality = ddply(mostTargetedNationality, .(année), summarize, nationalite=nationalité_ciblée[1], morts=morts[1])
+plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite)) +
+  geom_bar(stat="identity") + 
+  labs(title="La nationalité la plus visée par le terrorisme selon l'année", x="Année", y="Nombre de morts") + 
+  geom_text(aes(label=nationalite), position=position_dodge(width=0.9), size=6, vjust=0.4, hjust=-0.1, angle = 90) +
+  theme(title=element_text(size=30), 
+        axis.text.x=element_text(size=15, angle=90), 
+        axis.text.y=element_text(size=20), 
+        legend.position="none")+
+  scale_x_continuous(breaks = c(1970:2017))+ylim(min=0,max=15000)
+ggsave(plot, filename="graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
+```
+
+```{r}
+#Les 10 pays les plus touchés
+killsPerCountry = ddply(gterror, .(pays), summarize, morts=sum(na.omit(nombre_morts)))
+killsPerCountry = killsPerCountry[order(-killsPerCountry$morts),][0:10,]
+plot = ggplot(killsPerCountry, aes(x=reorder(pays,-morts),y=morts, fill=pays)) +
+  geom_bar(stat="identity") +
+  labs(title="Les dix pays les plus touchés", x="Pays", y="Nombre de morts") +
+  geom_text(aes(label=pays), vjust=0, hjust=-0.1, color="black", size=10, angle=90) + 
+  theme(title=element_text(size=30), 
+        axis.title.x=element_text(size=20), axis.title.y=element_text(size=20), 
+        axis.text.x=element_blank(), axis.text.y=element_text(size=20),  
+        legend.position="none") + 
+  ylim(min=0, max=90000)
+ggsave(plot, filename="graphiques/tenTargetedCountries.pdf", width=16, height=9)
+```
+
+```{r}
+#Nombre de victimes du terrorisme par région du monde
+killsPerRegion = ddply(gterror, .(région), summarize, morts=sum(na.omit(nombre_morts)))
+killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
+plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts), y=morts, fill=région)) +
+  geom_bar(stat="identity") +
+  labs(title="Nombre de victimes du terrorisme par région", x="Région", y="Nombre de morts") + 
+  geom_text(aes(label=région), color="black", hjust=-0.005, size=4.3, angle=90) +
+  theme(title=element_text(size=30), 
+        axis.title.x=element_text(size=20), axis.title.y=element_text(size=20), 
+        axis.text.x=element_blank(),  axis.text.y=element_text(size=20), 
+        legend.position="none") +
+  ylim(min=0, max=180000)
+ggsave(plot, filename="graphiques/killsPerRegion.pdf", width=16, height=9)
+```
+
+```{r}
 # Carte des activités terroristes depuis 1970
 data = subset(gterror, select=c(latitude, longitude))
 data <- subset(data, data$longitude >= -10000)
@@ -197,4 +183,17 @@ map = ggplot( data , aes( data$longitude , data$latitude )) +
       panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
       plot.background=element_blank())
 ggsave(map, filename="graphiques/map.pdf", width=16, height=9)
+```
+
+Graphe annexe : 
+```{r}
+#Evolution du nombre de victimes en France
+gterrorfr = gterror[gterror$pays=="France",]
+gterrorfr = ddply(gterrorfr, .(année), summarize, morts = sum(na.omit(nombre_morts)))
+plot = ggplot(gterrorfr, aes(x=année,y=morts)) +
+  geom_line(size=0.8) + geom_point(size=3) + 
+  labs(title="Evolution du nombre de victimes en France", x="Année", y="Nombre de morts") +
+  theme(title=element_text(size=30),
+        axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
+ggsave(plot, filename = "graphiques/killsInFrancePerYear.pdf", width=16, height=9)
 ```
