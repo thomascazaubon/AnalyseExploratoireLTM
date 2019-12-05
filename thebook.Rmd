@@ -1,4 +1,10 @@
-Avant toute chose, on commence par supprimer les données du dataset qui ne nous intéressent pas, on créé ensuite un nouveau dataset, bien plus léger, qui nous servira de base de travail pour la suite.
+# Analyse exploratoire
+# Les activités terroristes modiales depuis 1970
+## CAZAUBON Thomas - FEUILLET Laure - PLANTEC Maël
+
+### Filtrage des données
+
+Avant toute chose, on commence par supprimer les données du dataset qui ne nous intéressent pas, on crée ensuite un nouveau dataset, bien plus léger, qui nous servira de base de travail pour la suite.
 
 ```{r}
 ####################################
@@ -17,6 +23,7 @@ names(filtered) <- c("année", "mois", "étendu", "pays", "région", "région_lo
 #Sauvegarde sur csv
 write.csv(filtered, "./filtered_terrorism.csv")
 ```
+### Analyse des données
 C'est parti !
 ```{r}
 ####################################
