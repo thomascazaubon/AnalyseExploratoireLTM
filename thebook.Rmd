@@ -120,9 +120,10 @@ plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite)
   labs(title="La nationalité la plus visée par le terrorisme selon l'année", x="Année", y="Nombre de morts") + 
   geom_text(aes(label=nationalite), position=position_dodge(width=0.9), size=6, vjust=0.4, hjust=-0.1, angle = 90) +
   theme(title=element_text(size=30), 
-        axis.text.x=element_text(size=20), 
+        axis.text.x=element_text(size=15, angle=90), 
         axis.text.y=element_text(size=20), 
-        legend.position="none")
+        legend.position="none")+
+  scale_x_continuous(breaks = c(1970:2017))+ylim(min=0,max=15000)
 ggsave(plot, filename="graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
 ```
 
