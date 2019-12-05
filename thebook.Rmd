@@ -49,7 +49,7 @@ killsPerYear = ddply(gterror, .(année), summarize,
 killsPerYear = gather(data=killsPerYear, key=TYPE, value=VAL, total, morts)
 plot = ggplot(killsPerYear, aes(x=année,y=VAL, color=TYPE)) + 
   geom_line(size=0.8) + geom_point(size=3) + 
-  labs(title="Evolution du nombre de victimes du terrorisme dans le monde", x ="Année", y="Nombre de victimes", size=50) + 
+  labs(title="Evolution du nombre de victimes du terrorisme dans le monde", x ="Année", y="Nombre de victimes") + 
   theme(title = element_text(size=30), axis.text.x = element_text(size=20), axis.text.y = element_text(size=20), legend.title = element_blank(), legend.text = element_text(size=20))
 ggsave(plot, filename = "graphiques/killsPerYear.pdf", width=16, height=9)
 ```
@@ -58,8 +58,17 @@ ggsave(plot, filename = "graphiques/killsPerYear.pdf", width=16, height=9)
 #Nombre de victimes du terrorisme par région du monde
 killsPerRegion = ddply(gterror, .(région), summarize, morts = sum(na.omit(nombre_morts)))
 killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
-plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts),y=morts))+geom_bar(stat="identity")+ggtitle("Nombre de victimes du terrorisme par région")+xlab("Région")+ylab("Nombre de morts")+coord_flip()
-ggsave(plot, filename = "graphiques/killsPerRegion.pdf", width=4, height=3)
+plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts),y=morts, fill=région)) +
+  geom_bar(stat="identity") +
+  labs(title="Nombre de victimes du terrorisme par région", x="Région", y="Nombre de morts") + 
+  geom_text(aes(label=région), color="black", hjust=-0.005, size=4.3, angle=90) +
+  theme(title = element_text(size=30), 
+        axis.title.x=element_text(size=20), axis.title.y=element_text(size=20), 
+        axis.text.y=element_text(size=20), axis.text.x=element_blank(), 
+        legend.position="none") +
+  ylim(min=0, max=180000)
+ggsave(plot, filename = "graphiques/killsPerRegion.pdf", width=16, height=9)
+ggsave(plot, filename = "graphiques/killsPerRegion.jpg", width=16, height=9)
 ```
 
 ```{r}
