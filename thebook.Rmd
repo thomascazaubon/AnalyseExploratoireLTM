@@ -118,6 +118,9 @@ ggsave(gbottom5, filename="graphiques/bottom5weaponsEvolutionOfKills.pdf", width
 ```
 
 ```{r}
+<<<<<<< HEAD
+gtop5 = ggplot(top5_morts_par_type_arme_par_année, aes(x=année, y=nombre_morts, color=type_arme)) + geom_line(aes(group=type_arme, linetype=type_arme), size= 1) + ggtitle("Top 5 des armes : Evolution des morts par année.") + xlab("Année") + ylab("Nombre de morts") + labs(color = "Arme", size = 30) + theme(title = element_text(size=30), axis.text.y = element_text(size = 20), axis.text.x = element_text(size = 20, angle=45), legend.text = element_text(size=25))+ scale_colour_discrete("") + scale_linetype_manual("", values=c(1,2,3,4,5,6)) + scale_shape_manual("", values=c(17,18, 19,20,21,22))
+=======
 #Nationalité la plus visée par année
 mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts=sum(na.omit(nombre_morts)))
 mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
@@ -133,6 +136,7 @@ plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite)
   scale_x_continuous(breaks = c(1970:2017))+ylim(min=0,max=15000)
 ggsave(plot, filename="graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
 ```
+>>>>>>> ffc64bba87ddf84de83ed9e6e9ac366aa6bec089
 
 ```{r}
 #Les 10 pays les plus touchés
