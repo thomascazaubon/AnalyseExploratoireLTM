@@ -1,6 +1,6 @@
 # Analyse exploratoire
 # Les activités terroristes mondiales depuis 1970
-## CAZAUBON Thomas - FEUILLET Laure - PLANTEC Maël
+**5 SDBD A2 - CAZAUBON Thomas, FEUILLET Laure, PLANTEC Maël**
 
 ### Filtrage des données
 
@@ -37,11 +37,12 @@ require("tidyr")
 ```
 Se familiariser avec les données :
 ```{r}
-#Nombre de victimes du terrorisme depuis 1970 : 411868
+#Nombre de victimes (décès) du terrorisme depuis 1970
 nbkills = sum(na.omit(gterror$nombre_morts))
+nbkills
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Nombre de victimes du terrorisme par année : 2014 est l'année la plus meurtrière avec quasiment 45000 victimes !
 killsPerYear = ddply(gterror, .(année), summarize,
                      total=sum(na.omit(nombre_blessés))+sum(na.omit(nombre_morts)),
@@ -54,9 +55,10 @@ plot = ggplot(killsPerYear, aes(x=année, y=victimes, color=type)) +
         axis.text.x=element_text(size=20), axis.text.y=element_text(size=20), 
         legend.title=element_blank(), legend.text=element_text(size=20))
 ggsave(plot, filename="graphiques/killsPerYear.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Nombre d'attentats par année
 attacksPerYear = ddply(gterror, .(année), summarize,
                      attentats=length(pays))
@@ -66,9 +68,10 @@ plot = ggplot(attacksPerYear, aes(x=année, y=attentats)) +
   theme(title=element_text(size=30), 
         axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
 ggsave(plot, filename="graphiques/attacksPerYear.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Evolution du nombre de succès
 successesPerYear = ddply(gterror, .(année), summarize, ratio=(sum(na.omit(succès))/length(année)))
 plot = ggplot(successesPerYear, aes(x=année, y=ratio)) +
@@ -76,9 +79,10 @@ plot = ggplot(successesPerYear, aes(x=année, y=ratio)) +
   labs(title="Evolution du taux de réussite des attentats", x="Année", y="Taux de réussite") +
   theme(title=element_text(size=30), axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
 ggsave(plot, filename="graphiques/successRatioPerYear.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 # Je garde uniquement certaines colonnes qui m'interessent.
 tw = subset(gterror, select=c(année, pays, type_attaque, responsable, type_arme, nombre_morts, nombre_blessés))
 
@@ -88,13 +92,14 @@ tw = subset(gterror, select=c(année, pays, type_attaque, responsable, type_arme
 morts_par_type_arme = ddply(tw, .(type_arme), summarize, nombre_morts=sum(na.omit(nombre_morts)))
 
 # Evolution de ce top 5 et last 5 au fil du temps
-morts_par_type_arme_par_annee = ddply(tw, .(type_arme, année), summarize, nombre_morts=sum(na.omit(nombre_morts)))
+morts_par_type_arme_par_annee = ddply(tw, .(type_arme, année), summarize,
+                                      nombre_morts=sum(na.omit(nombre_morts)))
 top5_armes = arrange(morts_par_type_arme, -morts_par_type_arme$nombre_morts)[1:5,]
 
-top5_morts_par_type_arme_par_annee = morts_par_type_arme_par_année[morts_par_type_arme_par_année$type_arme %in% top5_armes$type_arme, ]
+top5_morts_par_type_arme_par_annee = morts_par_type_arme_par_annee[morts_par_type_arme_par_annee$type_arme %in% top5_armes$type_arme, ]
 
 bottom5_armes = arrange(morts_par_type_arme, -morts_par_type_arme$nombre_morts)[7:12,]
-bottom5_morts_par_type_arme_par_annee = morts_par_type_arme_par_année[morts_par_type_arme_par_année$type_arme %in% bottom5_armes$type_arme, ]
+bottom5_morts_par_type_arme_par_annee = morts_par_type_arme_par_annee[morts_par_type_arme_par_annee$type_arme %in% bottom5_armes$type_arme, ]
 
 # Plots
 gtop5 = ggplot(top5_morts_par_type_arme_par_annee, aes(x=année, y=nombre_morts, color=type_arme)) + 
@@ -115,9 +120,12 @@ gbottom5 = ggplot(bottom5_morts_par_type_arme_par_annee, aes(x=année, y=nombre_
 
 ggsave(gtop5, filename="graphiques/top5weaponsEvolutionOfKills.pdf", width=16, height=9)
 ggsave(gbottom5, filename="graphiques/bottom5weaponsEvolutionOfKills.pdf", width=16, height=9)
+
+gtop5
+gbottom5
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Nationalité la plus visée par année
 mostTargetedNationality = ddply(gterror, .(année, nationalité_ciblée), summarize, morts=sum(na.omit(nombre_morts)))
 mostTargetedNationality = mostTargetedNationality[order(mostTargetedNationality$année, -mostTargetedNationality$morts),]
@@ -132,9 +140,10 @@ plot = ggplot(mostTargetedNationality, aes(x=année,y=morts, fill = nationalite)
         legend.position="none")+
   scale_x_continuous(breaks = c(1970:2017))+ylim(min=0,max=15000)
 ggsave(plot, filename="graphiques/mostTargetedNationalityPerYear.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Les 10 pays les plus touchés
 killsPerCountry = ddply(gterror, .(pays), summarize, morts=sum(na.omit(nombre_morts)))
 killsPerCountry = killsPerCountry[order(-killsPerCountry$morts),][0:10,]
@@ -148,9 +157,10 @@ plot = ggplot(killsPerCountry, aes(x=reorder(pays,-morts),y=morts, fill=pays)) +
         legend.position="none") + 
   ylim(min=0, max=90000)
 ggsave(plot, filename="graphiques/tenTargetedCountries.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 #Nombre de victimes du terrorisme par région du monde
 killsPerRegion = ddply(gterror, .(région), summarize, morts=sum(na.omit(nombre_morts)))
 killsPerRegion = killsPerRegion[order(-killsPerRegion$morts),]
@@ -164,9 +174,10 @@ plot = ggplot(killsPerRegion, aes(x=reorder(région,-morts), y=morts, fill=régi
         legend.position="none") +
   ylim(min=0, max=180000)
 ggsave(plot, filename="graphiques/killsPerRegion.pdf", width=16, height=9)
+plot
 ```
 
-```{r}
+```{r, fig.width=16, fig.height=9}
 # Carte des activités terroristes depuis 1970
 data = subset(gterror, select=c(latitude, longitude))
 data <- subset(data, data$longitude >= -10000)
@@ -183,10 +194,11 @@ map = ggplot( data , aes( data$longitude , data$latitude )) +
       panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
       plot.background=element_blank())
 ggsave(map, filename="graphiques/map.pdf", width=16, height=9)
+map
 ```
 
-Graphe annexe : 
-```{r}
+Graphe annexe (que nous n'avons pas analysé dans le rapport) : 
+```{r, fig.width=16, fig.height=9}
 #Evolution du nombre de victimes en France
 gterrorfr = gterror[gterror$pays=="France",]
 gterrorfr = ddply(gterrorfr, .(année), summarize, morts = sum(na.omit(nombre_morts)))
@@ -196,4 +208,5 @@ plot = ggplot(gterrorfr, aes(x=année,y=morts)) +
   theme(title=element_text(size=30),
         axis.text.x=element_text(size=20), axis.text.y=element_text(size=20))
 ggsave(plot, filename = "graphiques/killsInFrancePerYear.pdf", width=16, height=9)
+plot
 ```
